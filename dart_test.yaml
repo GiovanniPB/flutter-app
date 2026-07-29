@@ -2,3 +2,6 @@ tags:
   # Golden roda local, nunca no CI Linux — renderização difere entre
   # plataformas (ADR 0008).
   golden:
+  # Integração exige Docker e o Supabase local de pé (ADR 0010). Roda por
+  # tool/test_integration.sh, que injeta a configuração.
+  integration:
