@@ -8,6 +8,10 @@ quase de graça depois dele.
 
 ## Telas
 
+> Este arquivo descreve o **destino**, não o presente — `docs/state.md` diz onde
+> estamos. Hoje a home é a Despensa e não existe barra de abas: ela nasce na
+> fatia `vencendo`, quando houver duas coisas para pôr nela.
+
 ### 1. Entrar
 
 E-mail → link mágico → volta autenticado. Sem senha, sem cadastro em duas
@@ -39,6 +43,9 @@ não ser abandonado.
 
 - **Obrigatório:** nome (digitado ou vindo do EAN escaneado) e **validade**
 - **Opcionais, recolhidos:** quantidade (padrão 1), local, data de compra, preço
+- a validade é **digitável** (`dd/mm/aaaa`), com o calendário como atalho —
+  num fluxo cujo valor é ser rápido, digitar bate tocar em três telas
+- preço aparece como moeda (`R$ 12,99`) e é guardado em centavos (ADR 0003)
 - digitar um nome novo cria um produto da casa e reaproveita nas próximas vezes
   ([ADR 0006](adr/0006-catalogo-de-produtos.md))
 - o código de barras identifica o **produto**, nunca o lote: a validade é
