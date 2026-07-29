@@ -91,7 +91,7 @@ void main() {
 
     expect(
       await psql(
-        'select distinct household_id::text from public.pantry_items i '
+        'select distinct i.household_id::text from public.pantry_items i '
         'join public.household_members m on m.household_id = i.household_id '
         "where m.user_id = '${sessao.userId}'",
       ),
