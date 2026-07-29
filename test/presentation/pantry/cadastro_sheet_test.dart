@@ -16,6 +16,10 @@ import 'package:flutter_test/flutter_test.dart';
 // duplicar evita que os dois arquivos descrevam repositórios diferentes.
 import '../auth/entrar_screen_test.dart' show FakeAuthRepository;
 
+/// "Hoje" de todos os testes de tela. Fixo de propósito: com `DateTime.now()`
+/// o selo de validade mudaria de texto conforme o dia em que a suíte roda.
+final DateTime hojeDeTeste = DateTime(2026, 7, 29);
+
 class FakePantryRepository implements PantryRepository {
   FakePantryRepository({this.failure, List<PantryItem>? itens})
       : _itens = List<PantryItem>.of(itens ?? const <PantryItem>[]);
@@ -58,6 +62,9 @@ class FakePantryRepository implements PantryRepository {
         id: 'i-${_itens.length + 1}',
         product: Product(id: 'p-${name.value}', name: name),
         expiresOn: expiresOn,
+        // O banco carimba `now()`; aqui a data é fixa para o teste não depender
+        // do dia em que roda.
+        createdAt: hojeDeTeste,
         quantity: quantity,
         purchasedOn: purchasedOn,
         location: location,
@@ -72,6 +79,8 @@ PantryItem item({
   required String id,
   required String nome,
   required DateTime validade,
+  DateTime? criadoEm,
+  DateTime? compra,
   int quantidade = 1,
   StorageLocation? local,
 }) =>
@@ -79,6 +88,8 @@ PantryItem item({
       id: id,
       product: Product(id: 'p-$nome', name: ProductName.tryParse(nome)!),
       expiresOn: validade,
+      createdAt: criadoEm ?? hojeDeTeste,
+      purchasedOn: compra,
       quantity: quantidade,
       location: local,
     );
@@ -87,12 +98,14 @@ Future<void> pumpHome(
   WidgetTester tester, {
   required FakePantryRepository pantry,
   FakeAuthRepository? auth,
+  DateTime? hoje,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
         pantryRepositoryProvider.overrideWithValue(pantry),
         authRepositoryProvider.overrideWithValue(auth ?? FakeAuthRepository()),
+        todayProvider.overrideWithValue(hoje ?? hojeDeTeste),
       ],
       child: const MaterialApp(home: HomeScreen()),
     ),
@@ -104,6 +117,14 @@ Future<void> pumpHome(
 /// settle nunca volta.
 Future<void> abrir(WidgetTester tester) async {
   await tester.tap(find.byKey(adicionarKey));
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+}
+
+/// A home abre na aba Vencendo. Item tranquilo só existe na segunda aba — é
+/// para lá que vão os testes que falam da despensa inteira.
+Future<void> irParaDespensa(WidgetTester tester) async {
+  await tester.tap(find.byKey(abaDespensaKey));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 400));
 }
@@ -126,6 +147,7 @@ void main() {
         item(id: 'i-2', nome: 'Arroz Tio João 5 kg', validade: DateTime(2027, 8, 20)),
       ]),
     );
+    await irParaDespensa(tester);
 
     expect(find.text('Arroz Tio João 5 kg'), findsNWidgets(2));
     expect(find.textContaining('vence 12/03/2027'), findsOneWidget);
@@ -183,6 +205,8 @@ void main() {
     expect(pantry.nomesGravados.single.value, 'Arroz Tio João 5 kg',
         reason: 'aparado');
     expect(pantry.quantidadesGravadas.single, 1, reason: 'padrão');
+
+    await irParaDespensa(tester);
     expect(find.text('Arroz Tio João 5 kg'), findsOneWidget);
     expect(find.textContaining('1 un · vence 12/03/2027'), findsOneWidget);
   });
@@ -217,6 +241,8 @@ void main() {
 
     expect(pantry.quantidadesGravadas.single, 12);
     expect(pantry.precosGravados.single, 1299);
+
+    await irParaDespensa(tester);
     expect(find.textContaining('12 un · vence 02/08/2026'), findsOneWidget);
   });
 

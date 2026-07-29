@@ -16,8 +16,8 @@ class PantryException implements Exception {
 /// Porta da despensa. A casa não aparece em lugar nenhum desta interface: o
 /// banco preenche `household_id` por default e a RLS valida (ADR 0002).
 abstract interface class PantryRepository {
-  /// Itens da casa. Mais recentes primeiro nesta fatia — ordenar por urgência é
-  /// assunto da fatia `vencendo`.
+  /// Itens da casa, mais recentes primeiro. A ordem que a tela mostra é outra e
+  /// não vem daqui: urgência é regra, e regra mora em `domain` (`byUrgency`).
   Stream<List<PantryItem>> watchItems();
 
   /// Grava um item, reaproveitando o produto da casa com esse nome ou criando-o

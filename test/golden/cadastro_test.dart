@@ -1,4 +1,3 @@
-import 'package:despensa/domain/pantry/pantry_item.dart';
 import 'package:despensa/domain/pantry/pantry_repository.dart';
 import 'package:despensa/presentation/auth/entrar_providers.dart';
 import 'package:despensa/presentation/home/home_screen.dart';
@@ -10,14 +9,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../presentation/auth/entrar_screen_test.dart' show FakeAuthRepository;
 import '../presentation/pantry/cadastro_sheet_test.dart'
-    show FakePantryRepository, item;
+    show FakePantryRepository, hojeDeTeste;
 import 'harness.dart';
 
+/// Os goldens da home moraram aqui até a fatia `vencendo`; agora estão em
+/// `vencendo_test.dart` e este arquivo ficou só com a folha de cadastro.
 Widget Function(Widget) _com(FakePantryRepository pantry) {
   return (Widget child) => ProviderScope(
         overrides: [
           pantryRepositoryProvider.overrideWithValue(pantry),
           authRepositoryProvider.overrideWithValue(FakeAuthRepository()),
+          todayProvider.overrideWithValue(hojeDeTeste),
         ],
         child: child,
       );
@@ -31,54 +33,6 @@ Future<void> _abrirFolha(WidgetTester tester) async {
 
 void main() {
   setUpAll(loadAppFonts);
-
-  testWidgets('home — despensa vazia', (WidgetTester tester) async {
-    await pumpGoldenScreen(
-      tester,
-      const HomeScreen(),
-      wrap: _com(FakePantryRepository()),
-    );
-
-    await expectLater(
-      find.byType(HomeScreen),
-      matchesGoldenFile('goldens/home_vazia.png'),
-    );
-  }, tags: <String>['golden']);
-
-  testWidgets('home — com itens', (WidgetTester tester) async {
-    await pumpGoldenScreen(
-      tester,
-      const HomeScreen(),
-      wrap: _com(
-        FakePantryRepository(itens: <PantryItem>[
-          item(
-            id: 'i-1',
-            nome: 'Arroz Tio João 5 kg',
-            validade: DateTime(2027, 3, 12),
-            local: StorageLocation.pantry,
-          ),
-          item(
-            id: 'i-2',
-            nome: 'Arroz Tio João 5 kg',
-            validade: DateTime(2027, 8, 20),
-            local: StorageLocation.pantry,
-          ),
-          item(
-            id: 'i-3',
-            nome: 'Leite integral 1 L',
-            validade: DateTime(2026, 8, 2),
-            quantidade: 12,
-            local: StorageLocation.fridge,
-          ),
-        ]),
-      ),
-    );
-
-    await expectLater(
-      find.byType(HomeScreen),
-      matchesGoldenFile('goldens/home_com_itens.png'),
-    );
-  }, tags: <String>['golden']);
 
   testWidgets('cadastro — obrigatórios preenchidos', (WidgetTester tester) async {
     await pumpGoldenScreen(

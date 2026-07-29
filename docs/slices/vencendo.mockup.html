@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Mockup — fatia vencendo</title>
+<style>
+  :root {
+    --primary: #6750A4;
+    --on-primary: #FFFFFF;
+    --primary-container: #EADDFF;
+    --on-primary-container: #21005D;
+    --surface: #FEF7FF;
+    --on-surface: #1D1B20;
+    --on-surface-variant: #49454F;
+    --outline-variant: #CAC4D0;
+    --error: #B3261E;
+    --error-container: #F9DEDC;
+    --on-error-container: #410E0B;
+    /* Aviso não existe no baseline M3: nasce aqui, num lugar só. */
+    --warn-container: #FFE1A8;
+    --on-warn-container: #402D00;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Roboto, -apple-system, system-ui, sans-serif;
+    background: #E8E2EA;
+    color: var(--on-surface);
+    padding: 32px;
+  }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+  .legenda { font-size: 13px; color: var(--on-surface-variant); margin-bottom: 24px; max-width: 70ch; line-height: 1.5; }
+  .telas { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+  .col { display: flex; flex-direction: column; gap: 8px; }
+  .rotulo { font-size: 12px; font-weight: 500; color: var(--on-surface-variant); letter-spacing: .04em; text-transform: uppercase; }
+
+  .tela {
+    width: 390px; height: 844px;
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1px solid var(--outline-variant);
+    overflow: hidden;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+
+  .appbar {
+    height: 64px; display: flex; align-items: center;
+    padding: 0 4px 0 16px; gap: 8px;
+  }
+  .titulo { font-size: 22px; font-weight: 400; flex: 1; }
+  .icone { width: 48px; height: 48px; display: grid; place-items: center; color: var(--on-surface-variant); }
+  .icone svg { width: 22px; height: 22px; }
+
+  .abas { display: flex; height: 48px; border-bottom: 1px solid var(--outline-variant); }
+  .aba {
+    flex: 1; display: grid; place-items: center;
+    font-size: 14px; font-weight: 500; color: var(--on-surface-variant);
+    position: relative;
+  }
+  .aba .badge {
+    margin-left: 6px; background: var(--error); color: #fff;
+    font-size: 11px; line-height: 1; padding: 3px 6px; border-radius: 8px;
+  }
+  .aba > span { display: inline-flex; align-items: center; }
+  .aba.ativa { color: var(--primary); }
+  .aba.ativa::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 70px; height: 3px; border-radius: 3px 3px 0 0; background: var(--primary);
+  }
+
+  .corpo { flex: 1; overflow: hidden; }
+
+  .secao {
+    padding: 18px 16px 6px;
+    font-size: 12px; font-weight: 500; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--on-surface-variant);
+  }
+  .secao.perigo { color: var(--error); }
+
+  .tile {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; min-height: 68px;
+  }
+  .tile + .tile { border-top: 1px solid rgba(202,196,208,.5); }
+  .tile .txt { flex: 1; min-width: 0; }
+  .nome { font-size: 16px; line-height: 1.25; }
+  .sub { font-size: 12px; color: var(--on-surface-variant); margin-top: 3px; }
+
+  .selo {
+    font-size: 11px; font-weight: 500; white-space: nowrap;
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .selo.vencido { background: var(--error-container); color: var(--on-error-container); }
+  .selo.vencendo { background: var(--warn-container); color: var(--on-warn-container); }
+
+  .vazio {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px; padding: 0 40px;
+    text-align: center;
+  }
+  .vazio svg { width: 40px; height: 40px; }
+  .vazio .t { font-size: 16px; font-weight: 500; }
+  .vazio .d { font-size: 14px; color: var(--on-surface-variant); line-height: 1.4; }
+
+  .fab {
+    position: absolute; right: 16px; bottom: 16px;
+    width: 56px; height: 56px; border-radius: 16px;
+    background: var(--primary-container); color: var(--on-primary-container);
+    display: grid; place-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 8px rgba(0,0,0,.15);
+  }
+  .fab svg { width: 24px; height: 24px; }
+
+  .notas { margin-top: 28px; max-width: 78ch; font-size: 14px; line-height: 1.65; }
+  .notas h2 { font-size: 15px; font-weight: 500; margin: 18px 0 6px; }
+  .notas li { margin-left: 18px; }
+  .notas code { background: #DCD5DE; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>Fatia <em>vencendo</em> — mockup</h1>
+<p class="legenda">
+  Hoje é <strong>29/07/2026</strong>. A aba <strong>Vencendo</strong> é a que abre.
+  Selo de <code>ok</code> não existe: item tranquilo não ganha pílula — é a
+  ausência que diz que está tudo bem.
+</p>
+
+<div class="telas">
+
+  <!-- 1. Vencendo com conteúdo -->
+  <div class="col">
+    <div class="rotulo">1 · Vencendo (home)</div>
+    <div class="tela">
+      <div class="appbar">
+        <div class="titulo">Despensa</div>
+        <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      </div>
+      <div class="abas">
+        <div class="aba ativa"><span>Vencendo <span class="badge">5</span></span></div>
+        <div class="aba"><span>Despensa</span></div>
+      </div>
+      <div class="corpo">
+        <div class="secao perigo">Vencidos</div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Leite integral 1 L</div>
+            <div class="sub">2 un · vence 24/07/2026 · geladeira</div>
+          </div>
+          <div class="selo vencido">venceu há 5 dias</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Iogurte natural 170 g</div>
+            <div class="sub">4 un · vence 27/07/2026 · geladeira</div>
+          </div>
+          <div class="selo vencido">venceu há 2 dias</div>
+        </div>
+
+        <div class="secao">Vencendo</div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Pão de forma</div>
+            <div class="sub">1 un · vence 29/07/2026 · despensa</div>
+          </div>
+          <div class="selo vencendo">vence hoje</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Queijo minas 500 g</div>
+            <div class="sub">1 un · vence 30/07/2026 · geladeira</div>
+          </div>
+          <div class="selo vencendo">vence amanhã</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Presunto 200 g</div>
+            <div class="sub">1 un · vence 01/08/2026 · geladeira</div>
+          </div>
+          <div class="selo vencendo">em 3 dias</div>
+        </div>
+      </div>
+      <div class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    </div>
+  </div>
+
+  <!-- 2. Vencendo vazia -->
+  <div class="col">
+    <div class="rotulo">2 · Vencendo vazia (sucesso)</div>
+    <div class="tela">
+      <div class="appbar">
+        <div class="titulo">Despensa</div>
+        <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      </div>
+      <div class="abas">
+        <div class="aba ativa"><span>Vencendo</span></div>
+        <div class="aba"><span>Despensa</span></div>
+      </div>
+      <div class="corpo">
+        <div class="vazio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#49454F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg>
+          <div class="t">Nada vencendo</div>
+          <div class="d">Tudo na despensa está dentro do prazo.</div>
+        </div>
+      </div>
+      <div class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    </div>
+  </div>
+
+  <!-- 3. Despensa -->
+  <div class="col">
+    <div class="rotulo">3 · Despensa (segunda aba)</div>
+    <div class="tela">
+      <div class="appbar">
+        <div class="titulo">Despensa</div>
+        <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      </div>
+      <div class="abas">
+        <div class="aba"><span>Vencendo <span class="badge">5</span></span></div>
+        <div class="aba ativa"><span>Despensa</span></div>
+      </div>
+      <div class="corpo">
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Leite integral 1 L</div>
+            <div class="sub">2 un · vence 24/07/2026 · geladeira</div>
+          </div>
+          <div class="selo vencido">venceu há 5 dias</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Iogurte natural 170 g</div>
+            <div class="sub">4 un · vence 27/07/2026 · geladeira</div>
+          </div>
+          <div class="selo vencido">venceu há 2 dias</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Pão de forma</div>
+            <div class="sub">1 un · vence 29/07/2026 · despensa</div>
+          </div>
+          <div class="selo vencendo">vence hoje</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Queijo minas 500 g</div>
+            <div class="sub">1 un · vence 30/07/2026 · geladeira</div>
+          </div>
+          <div class="selo vencendo">vence amanhã</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Presunto 200 g</div>
+            <div class="sub">1 un · vence 01/08/2026 · geladeira</div>
+          </div>
+          <div class="selo vencendo">em 3 dias</div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Arroz Tio João 5 kg</div>
+            <div class="sub">1 un · vence 12/03/2027 · despensa</div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="txt">
+            <div class="nome">Feijão preto 1 kg</div>
+            <div class="sub">3 un · vence 20/08/2027 · despensa</div>
+          </div>
+        </div>
+      </div>
+      <div class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="notas">
+  <h2>Decisões que este mockup está pedindo para aprovar</h2>
+  <ul>
+    <li><strong>Abas no topo, não barra inferior.</strong> São duas listas do
+      mesmo tipo de conteúdo — o caso de uso de <code>TabBar</code>. A lista de
+      compras é outro pilar: quando chegar, a navegação muda de nível de
+      qualquer jeito.</li>
+    <li><strong>Contador na aba Vencendo.</strong> Diz quantos exigem atenção
+      sem obrigar a trocar de aba. Some quando é zero.</li>
+    <li><strong>Duas seções na aba Vencendo</strong> — "Vencidos" em vermelho no
+      topo, "Vencendo" abaixo. É o "visualmente separados" da
+      <code>surfaces.md</code>, sem inventar cabeçalho por dia.</li>
+    <li><strong>Selo com texto relativo</strong> ("venceu há 5 dias", "vence
+      hoje", "em 3 dias") e a data absoluta continuando no subtítulo. O relativo
+      é o que faz agir; o absoluto é o que a pessoa digitou.</li>
+    <li><strong>Item <code>ok</code> não tem selo.</strong> Pílula cinza em tudo
+      viraria ruído e a lista deixaria de gritar onde importa.</li>
+    <li><strong>Âmbar novo no tema.</strong> O baseline M3 não tem cor de aviso;
+      <code>#FFE1A8 / #402D00</code> nasce aqui, declarado num lugar só.</li>
+    <li><strong>Vazio de sucesso</strong> — ícone de conferido, não cesta triste.</li>
+  </ul>
+</div>
+
+</body>
+</html>

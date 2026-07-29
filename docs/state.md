@@ -6,10 +6,14 @@
 
 ## Onde estamos
 
-Entra-se por código de 6 dígitos no e-mail e cadastra-se item na despensa. A
-home **é** a despensa: lista os itens com quantidade, validade e local, e tem
-FAB que abre o cadastro rápido. Nada de vencimento ainda — a lista não ordena
-por urgência nem mostra selo.
+Entra-se por código de 6 dígitos no e-mail e cadastra-se item na despensa. O
+app abre em **Vencendo**: vencidos no topo sob cabeçalho próprio, depois os que
+entraram na janela da [ADR 0004](adr/0004-tempo-e-vencimento.md), com selo em
+texto relativo ("venceu há 5 dias", "vence hoje", "em 3 dias"). **Despensa** é a
+segunda aba e lista tudo, na mesma ordem. Item tranquilo não ganha selo.
+
+Nada de baixa ainda: a quantidade mostrada é a cadastrada, e vencido continua na
+lista até alguém dar baixa — que é a fatia seguinte.
 
 Banco com quatro tabelas (`households`, `household_members`, `products`,
 `pantry_items`), todas com RLS. `household_id` tem default
@@ -23,25 +27,30 @@ outro projeto na mesma máquina). Nenhum projeto na nuvem existe.
 
 ## Última fatia
 
-**teste-de-integracao** (débito) — `bash tool/test_integration.sh` prova num
-comando que entrar e cadastrar funcionam contra o Supabase local
-([PR #5](https://github.com/GiovanniPB/flutter-app/pull/5)).
+**vencendo** — a home separa Vencendo de Despensa em duas abas, com a janela
+percentual da ADR 0004 calculada na hora, nunca persistida.
 
-535 linhas em 9 arquivos, dentro da faixa. Pagou-se por si: achou que
-`--exclude-tags` repetido não acumula, e o CI estava a um passo de rodar golden
-no Linux.
+1.398 linhas em 26 arquivos. O contador de arquivos passou do teto por causa
+dos 6 PNG de golden (4 novos, 2 apagados); em código a fatia ficou na faixa.
+
+Duas coisas que só apareceram construindo: `created_at` precisou entrar no item
+(é o começo da janela quando não há data de compra) e **despensa vazia não é
+"tudo dentro do prazo"** — quem nunca cadastrou nada vê o convite, não um
+parabéns.
 
 ## Próximas fatias
 
-1. **vencendo** — a home separa Vencendo de Despensa em duas abas, com os
-   vencidos no topo e a janela da [ADR 0004](adr/0004-tempo-e-vencimento.md).
-2. **baixa** — dou baixa de N unidades dizendo se consumi ou joguei fora, e a
+1. **baixa** — dou baixa de N unidades dizendo se consumi ou joguei fora, e a
    quantidade da lista passa a ser derivada dos movimentos.
-3. **freezer** — movo item para o freezer informando a nova validade, com
+2. **freezer** — movo item para o freezer informando a nova validade, com
    sugestão vinda da categoria do alimento.
+3. **lista-de-compras** — o segundo pilar; vem quase de graça depois da baixa,
+   porque é ela que sabe quando o último item de um produto zerou.
 
 ## Débitos conhecidos
 
+- **"Hoje" é lido uma vez por sessão** — `todayProvider` não observa a virada do
+  dia. App esquecido aberto de madrugada mostra o dia anterior até reabrir.
 - **Realtime não verificado** — `watchItems` usa o stream do Supabase; a
   integração lê por consulta direta com as mesmas colunas.
 - **Nenhum toque real na tela** — painel do simulador iOS sem permissão. Existe
@@ -55,11 +64,11 @@ no Linux.
   não conta isso.
 - **Offline** — v1 é online-only; modelo preparado
   ([ADR 0005](adr/0005-sincronizacao.md)).
-- **Lista de compras** — segundo pilar, depende do fluxo de baixa.
 - **Leitura de EAN** — colunas prontas e nulas, sem tela.
 - **Quantidade parcial** ("meio pacote") — interessante, não essencial.
 - **Tela de gastos** — preço já é gravado, sem tela.
-- **Push** — desejado, fora da v1.
+- **Push** — desejado, fora da v1. Vencer não dispara nada (ADR 0004): o
+  usuário abre o app e vê.
 - **Multiusuário** — schema pronto, falta convite e aceite
   ([ADR 0002](adr/0002-multi-tenancy.md)).
 - **Sem lint de Riverpod** — não resolve nesta versão do SDK
@@ -67,6 +76,13 @@ no Linux.
 
 ## Armadilhas
 
+- **Janela curta cai no piso e engana ao montar dado de teste.** Item cadastrado
+  hoje com validade em 4 dias tem alerta de 2 — fica `ok`, não "vencendo". Para
+  um item aparecer em Vencendo com folga, dê a ele uma **data de compra** antiga.
+- **Golden precisa de `todayProvider` sobrescrito**, senão o PNG muda sozinho
+  amanhã e o degrau 1 deixa de ser degrau.
+- **Respingo de toque congela no PNG** — depois de `tap` numa aba, pump de ~2 s
+  antes de comparar, ou o golden mostra um retângulo que não existe.
 - **Índice único parcial não serve como alvo de `on conflict`.** O upsert falha
   com "no unique or exclusion constraint matching". Use restrição.
 - **Asserção de banco tem que ser relativa** aos dados que o próprio teste cria.

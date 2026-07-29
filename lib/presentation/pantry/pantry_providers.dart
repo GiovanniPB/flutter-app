@@ -18,6 +18,16 @@ final StreamProvider<List<PantryItem>> pantryItemsProvider =
   return ref.watch(pantryRepositoryProvider).watchItems();
 });
 
+/// A data de hoje entra por dependência sobrescrevível: `DateTime.now()` dentro
+/// do domínio torna a janela de vencimento intestável, e golden precisa de um
+/// "hoje" fixo para o PNG não mudar sozinho amanhã.
+///
+/// É lido uma vez por sessão do app. App aberto atravessando a meia-noite só
+/// reflete a virada no próximo `invalidate` — sem tela ligada por horas, isso
+/// não paga um relógio.
+final Provider<DateTime> todayProvider =
+    Provider<DateTime>((Ref ref) => dateOnly(DateTime.now()));
+
 @immutable
 class CadastroState {
   const CadastroState({

@@ -9,8 +9,7 @@ quase de graça depois dele.
 ## Telas
 
 > Este arquivo descreve o **destino**, não o presente — `docs/state.md` diz onde
-> estamos. Hoje a home é a Despensa e não existe barra de abas: ela nasce na
-> fatia `vencendo`, quando houver duas coisas para pôr nela.
+> estamos.
 
 ### 1. Entrar
 
@@ -77,7 +76,7 @@ Duas abas na v1. A terceira nasce com a lista de compras.
 
 | Componente | Papel |
 |---|---|
-| `SeloValidade` | vencido · vencendo · ok — a peça de linguagem visual mais reusada do app |
+| `ExpiryBadge` | vencido · vencendo · ok — `ok` não desenha nada, e é isso que faz os outros dois serem vistos |
 | `ItemTile` | nome, quantidade atual, selo de validade |
 | `CampoValidade` | entrada de data pura, otimizada para digitar rápido |
 | `SeletorLocal` | despensa · geladeira · freezer |
