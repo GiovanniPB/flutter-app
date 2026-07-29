@@ -14,12 +14,14 @@ Map<String, dynamic> _row({
   String? purchasedOn,
   int? priceCents,
   String name = 'Arroz Tio João 5 kg',
+  String createdAt = '2026-07-29T12:00:00Z',
 }) {
   return <String, dynamic>{
     'id': 'i-1',
     'initial_quantity': 2,
     'expires_on': '2027-03-12',
     'purchased_on': purchasedOn,
+    'created_at': createdAt,
     'location': location,
     'price_cents': priceCents,
     'products': <String, dynamic>{
@@ -42,6 +44,27 @@ void main() {
       expect(item.product.name.value, 'Arroz Tio João 5 kg');
       expect(item.purchasedOn, isNull);
       expect(item.priceCents, isNull);
+    });
+
+    test('created_at vira o dia local, sem hora', () {
+      // É `timestamptz`, ao contrário das outras datas: sem `toLocal()` a
+      // janela de vencimento contaria dias do fuso errado (ADR 0004).
+      final DateTime local = DateTime.utc(2026, 7, 29, 12).toLocal();
+      final PantryItem item =
+          itemFromRow(_row(createdAt: '2026-07-29T12:00:00Z'));
+
+      expect(item.createdAt, DateTime(local.year, local.month, local.day));
+    });
+
+    test('sem data de compra, a janela começa no cadastro', () {
+      final PantryItem item = itemFromRow(_row(createdAt: '2026-07-29T12:00:00Z'));
+      expect(item.windowStart, item.createdAt);
+    });
+
+    test('a coluna created_at é pedida na consulta', () {
+      // O parser e a lista de colunas moram no mesmo arquivo justamente para
+      // não desandarem; este teste é o que prende os dois.
+      expect(pantryItemColumns, contains('created_at'));
     });
 
     test('lê os opcionais quando existem', () {

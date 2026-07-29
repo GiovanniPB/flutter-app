@@ -9,8 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 /// Colunas pedidas na leitura da despensa. Fica aqui, junto do mapeamento, para
 /// consulta e parser não desandarem em arquivos diferentes.
 const String pantryItemColumns =
-    'id, initial_quantity, expires_on, purchased_on, location, price_cents, '
-    'products!inner(id, name, brand, ean, food_category)';
+    'id, initial_quantity, expires_on, purchased_on, created_at, location, '
+    'price_cents, products!inner(id, name, brand, ean, food_category)';
 
 /// `date` do Postgres: sem hora, sem fuso (ADR 0004).
 String isoDate(DateTime moment) {
@@ -41,6 +41,10 @@ PantryItem itemFromRow(Map<String, dynamic> row) {
       category: foodCategoryFrom(produto['food_category'] as String?),
     ),
     expiresOn: DateTime.parse(row['expires_on'] as String),
+    // `created_at` é `timestamptz`, ao contrário das outras datas: chega em UTC
+    // e vira o dia local antes de o domínio ver, porque a janela de vencimento
+    // é contada em dias do fuso de quem abre o app (ADR 0004).
+    createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
     quantity: row['initial_quantity'] as int,
     purchasedOn: _dateOrNull(row['purchased_on'] as String?),
     location: storageLocationFrom(row['location'] as String?),
