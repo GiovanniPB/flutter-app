@@ -24,7 +24,7 @@ e editável por ela. Nunca é visto por outra casa.
 O catálogo global cresce apenas por leitura de EAN. **Não há promoção de
 produto de casa para global** — se um dia fizer sentido, vira ADR próprio.
 
-Todo item da dispensa aponta para um produto. Digitar um nome novo no cadastro
+Todo item da despensa aponta para um produto. Digitar um nome novo no cadastro
 rápido **cria um produto da casa** e reaproveita nas próximas vezes.
 
 A **categoria de alimento** é lista fixa definida por nós, opcional no produto,

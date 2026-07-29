@@ -1,0 +1,4 @@
+tags:
+  # Golden roda local, nunca no CI Linux — renderização difere entre
+  # plataformas (ADR 0008).
+  golden:

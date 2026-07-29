@@ -1,4 +1,4 @@
-# 0007 — Riverpod com geração de código
+# 0007 — Riverpod com providers escritos à mão
 
 ## Contexto
 
@@ -10,10 +10,10 @@ função de outra coisa — a escolha precisa fazer derivação ser barata.
 
 ## Decisão
 
-**Riverpod**, com `riverpod_generator` (providers anotados, não declarados à
-mão).
+**Riverpod**, com providers **declarados à mão**. Sem `riverpod_generator`, sem
+`build_runner`, sem `riverpod_lint`.
 
-- Providers de leitura são **derivados**: a dispensa vem do repositório, e a
+- Providers de leitura são **derivados**: a despensa vem do repositório, e a
   lista "vencendo" é um provider que depende dela mais a data de hoje.
 - Regra de negócio **não** mora em provider — mora em `domain`, em função pura,
   testável sem `ProviderContainer`.
@@ -24,6 +24,14 @@ mão).
 
 ## Alternativas descartadas
 
+- **Geração de código (`riverpod_generator`)** — tentada primeiro e descartada
+  na Fase 1 por conflito real de resolução: `riverpod_generator` ≥ 4.0.6 exige
+  `analyzer` 13, e o Flutter 3.44.6 fixa `analyzer` < 13 via `flutter_test`.
+  Contornar exige fixar três pacotes uma versão atrás
+  (`flutter_riverpod` 3.3.2 + `riverpod_annotation` 4.0.3 +
+  `riverpod_generator` 4.0.4) e refazer o quebra-cabeça a cada upgrade do SDK.
+  A geração economiza boilerplate; ela não habilita nada. Não vale o pedágio.
+  `riverpod_lint`/`custom_lint` caem pelo mesmo motivo.
 - **BLoC** — bom para máquina de estados com eventos; aqui o problema é
   derivação de dados, e o boilerplate por tela não se paga.
 - **`setState` / `ChangeNotifier` puros** — a derivação e o cache viram código
@@ -34,10 +42,10 @@ mão).
 ## Consequência
 
 Fácil: dado derivado é declarativo; sobrescrever qualquer dependência em teste
-é uma linha; o degrau golden fica trivial de montar.
+é uma linha; nenhum passo de geração no ciclo, e o upgrade do Flutter não
+depende do calendário de um gerador.
 
-Difícil: `build_runner` no ciclo. Mitigado por rodar em watch durante o
-trabalho.
+Difícil: `family` e `autoDispose` são escritos à mão, o que é mais verboso.
 
-Custo aceito: código gerado no repositório e uma curva para quem nunca usou
-Riverpod.
+Custo aceito: mais linhas por provider, em troca de um ciclo sem `build_runner`
+e de uma resolução de dependências que não quebra sozinha.

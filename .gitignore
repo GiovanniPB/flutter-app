@@ -1,0 +1,53 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# FVM
+.fvm/
+
+# Configuração por flavor — nunca versionada (ADR 0001)
+env/*.json
+!env/*.example.json
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Preferências locais do agente — settings.json e launch.json são versionados
+.claude/settings.local.json
+
+# macOS
+.DS_Store
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Flutter/flutter_export_environment.sh
+
+# macOS runner
+macos/Pods/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.kotlin/
+
+# Cobertura
+coverage/
+
+# Golden gerado em falha
+test/**/failures/

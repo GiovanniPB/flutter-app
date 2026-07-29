@@ -1,4 +1,4 @@
-# AGENTS.md — Dispensa
+# AGENTS.md — Despensa
 
 Leia este arquivo antes de qualquer trabalho. O "porquê" das decisões está em
 [`docs/adr/`](docs/adr); o domínio em [`docs/product.md`](docs/product.md).
@@ -14,17 +14,16 @@ escreva no lugar certo em vez de pedir ao usuário para reexplicar.
 
 ## Toolchain
 
-> **A escada abaixo ainda não existe.** Ela é montada na Fase 1
-> (`/projeto andaime flutter-supabase`). Enquanto o degrau 1 não estiver
-> funcionando, não abra fatia.
-
-Flutter via `fvm`, app único, Supabase como banco e autenticação.
+Flutter **3.44.6** fixado por `fvm` (`.fvmrc`), app único, Supabase como banco e
+autenticação. Não existe `flutter` global: **todo comando passa por `fvm`**.
 
 ```
 fvm flutter pub get
-fvm dart run build_runner watch -d      # Riverpod gera código
 supabase db reset                       # valida as migrations do zero
 ```
+
+Não há passo de geração de código: os providers do Riverpod são escritos à mão
+([ADR 0007](docs/adr/0007-gerencia-de-estado.md)).
 
 ## Escada de verificação
 
@@ -40,6 +39,17 @@ Verifique sempre no degrau mais barato que responda à pergunta.
 
 **O degrau 1 é o degrau de trabalho** — o único que o agente fecha sozinho. O
 degrau 4 roda antes do PR, nunca durante.
+
+Como usar o degrau 1:
+
+```bash
+fvm flutter test --update-goldens test/golden/   # gera/atualiza os PNG
+```
+
+O agente então **abre o PNG** em `test/golden/goldens/` e itera contra o mockup.
+Todo golden usa `pumpGolden` de `test/golden/harness.dart` — é ele que carrega a
+Roboto do SDK. Sem isso o texto vira caixinha e o PNG não serve para nada;
+`test/golden/escada_test.dart` existe só para provar que essa parte não quebrou.
 
 ## Arquitetura
 
@@ -68,6 +78,7 @@ Supabase.
 | widgets e telas | `lib/presentation/` |
 | migrations SQL | `supabase/migrations/` |
 | golden e harness de fonte | `test/golden/` |
+| configuração por flavor (git-ignored) | `env/dev.json` |
 
 ## Convenções de banco
 
@@ -94,12 +105,14 @@ Uma fatia = uma sessão. Se o "pronto quando" precisa da palavra "e", são duas.
 ## Definição de pronto
 
 ```bash
-fvm dart analyze --fatal-infos
-fvm flutter test --exclude-tags golden
-fvm flutter test test/golden/      # local, nunca no CI
-bash tool/check_coverage.sh 70     # lib/domain e lib/data
 bash tool/guards.sh
+fvm dart analyze --fatal-infos
+fvm flutter test --coverage --exclude-tags golden
+bash tool/check_coverage.sh 70     # lib/domain e lib/data
+fvm flutter test test/golden/      # local, nunca no CI
 ```
+
+O CI (`.github/workflows/ci.yml`) roda os mesmos comandos, menos o golden.
 
 Cobertura de 70% cobre `lib/domain/` e `lib/data/`. `presentation` fica de fora
 — lá a verificação real é o golden ([ADR 0008](docs/adr/0008-teste-e-definicao-de-pronto.md)).

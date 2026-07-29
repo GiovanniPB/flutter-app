@@ -1,10 +1,8 @@
-# Dispensa
-
-> Nome de trabalho — trocar quando o produto tiver nome.
+# Despensa
 
 ## Em uma frase
 
-App de dispensa doméstica que mostra em segundos o que está perto de vencer e
+App de despensa doméstica que mostra em segundos o que está perto de vencer e
 torna o cadastro de compras rápido o bastante para não ser abandonado.
 
 ## Não é
@@ -16,8 +14,8 @@ torna o cadastro de compras rápido o bastante para não ser abandonado.
   gastos na v1
 - **não controla fração de pacote** — "usei metade do arroz" não existe; a
   unidade é a menor granularidade
-- **não divide a casa em cômodos ou dispensas múltiplas** — a casa tem uma
-  dispensa só, com local opcional por item
+- **não divide a casa em cômodos ou despensas múltiplas** — a casa tem uma
+  despensa só, com local opcional por item
 - **não notifica** — sem push na v1; o usuário abre o app e vê
 - **não funciona offline** na v1 (ver [ADR 0005](adr/0005-sincronizacao.md))
 
@@ -53,7 +51,7 @@ Cada entidade é **modelo** (mutável, representa intenção) ou **registro**
   - produto de casa **não tem EAN** e só é visível pela casa dona
   - produto **nunca** tem validade nem quantidade — isso é do item
 
-### Item da dispensa (a coisa)
+### Item da despensa (a coisa)
 
 - tipo: **modelo**
 - pertence a: casa · aponta sempre para um produto
@@ -63,8 +61,8 @@ Cada entidade é **modelo** (mutável, representa intenção) ou **registro**
   - **validade é obrigatória**
   - quantidade inicial ≥ 1
   - `quantidade atual = quantidade inicial − Σ movimentos`, nunca negativa
-  - item com quantidade atual 0 sai da dispensa mas continua existindo
-  - local ∈ {dispensa, geladeira, freezer, nenhum}; só **freezer** mexe na
+  - item com quantidade atual 0 sai da despensa mas continua existindo
+  - local ∈ {despensa, geladeira, freezer, nenhum}; só **freezer** mexe na
     validade (ver [ADR 0004](adr/0004-tempo-e-vencimento.md))
 
 ### Movimento
@@ -101,7 +99,7 @@ Mapeado, fora do MVP (ver [`surfaces.md`](surfaces.md)).
 
 1. Entro por link mágico no e-mail; minha casa é criada no primeiro acesso.
 2. Escaneio o código de barras ou digito o nome, informo a validade, e o item
-   entra na dispensa.
+   entra na despensa.
 3. Abro o app e vejo, primeiro, o que está dentro da janela de vencimento.
 4. Dou baixa de N unidades de um item dizendo se consumi ou joguei fora.
 5. Movo um item para o freezer e informo a nova validade, com sugestão vinda da

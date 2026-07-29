@@ -13,7 +13,7 @@ de leite iguais com a mesma validade são um item de quantidade 12, não doze
 itens. Não existe fração: "meio pacote" não é representável, por decisão.
 
 **Dinheiro** é **inteiro em centavos**, moeda **BRL** fixa, campo **opcional**
-no item da dispensa (o que *eu* paguei naquela compra, não o preço do produto).
+no item da despensa (o que *eu* paguei naquela compra, não o preço do produto).
 Nenhuma tela consome esse campo na v1 — ele existe porque gravar é barato e
 retrofitar é caro. `double` para dinheiro é proibido em qualquer camada.
 
