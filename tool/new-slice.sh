@@ -31,6 +31,22 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+# Portão 4 — nenhum PR aberto para a main.
+#
+# O portão 2 sozinho não basta: close-slice.sh apaga o contrato ANTES do merge,
+# e nessa janela a fatia seguinte nasce de uma main que não tem a anterior. Já
+# aconteceu: feat/cadastro-manual saiu sem a fatia entrar dentro.
+if command -v gh >/dev/null 2>&1; then
+  pr_abertos=$(gh pr list --state open --base main --json number,headRefName \
+    --jq '.[] | "  #\(.number) \(.headRefName)"' 2>/dev/null || true)
+  if [ -n "$pr_abertos" ]; then
+    echo "erro: existe PR aberto para a main:" >&2
+    echo "$pr_abertos" >&2
+    echo "mergeie antes de abrir fatia, senão a nova nasce sem a anterior." >&2
+    exit 1
+  fi
+fi
+
 git switch main -q
 git pull --ff-only -q 2>/dev/null || echo "aviso: não deu pull (sem remoto?), seguindo com a main local"
 git switch -c "${tipo}/${nome}" -q
