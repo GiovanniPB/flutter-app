@@ -22,6 +22,7 @@ fvm flutter pub get
 supabase start                          # portas 544xx (54321 é de outro projeto)
 supabase db reset                       # valida as migrations do zero
 bash tool/test_db.sh                    # pgTAP no container que já está de pé
+bash tool/test_integration.sh           # fim a fim contra o stack local
 ```
 
 Mail local (código de acesso) em <http://127.0.0.1:54424>.
@@ -42,7 +43,7 @@ Verifique sempre no degrau mais barato que responda à pergunta.
 | 1 | `fvm flutter test test/golden/` | ~3 s | **agente** (lê o PNG) |
 | 2 | `fvm flutter widget-preview start` | ~1 s por edit | usuário |
 | 3 | app de pé via `.claude/launch.json` (`-d macos`) | ~1 s por edit | usuário |
-| 4 | gate completo (ver abaixo) | minutos | CI |
+| 4 | gate completo (ver abaixo) | minutos | CI + local |
 
 **O degrau 1 é o degrau de trabalho** — o único que o agente fecha sozinho. O
 degrau 4 roda antes do PR, nunca durante.
@@ -118,13 +119,21 @@ Uma fatia = uma sessão. Se o "pronto quando" precisa da palavra "e", são duas.
 ```bash
 bash tool/guards.sh
 fvm dart analyze --fatal-infos
-fvm flutter test --coverage --exclude-tags golden
-bash tool/check_coverage.sh 70     # lib/domain e lib/data
-fvm flutter test test/golden/      # local, nunca no CI
-bash tool/test_db.sh               # local, exige supabase start
+fvm flutter test --coverage --exclude-tags "golden || integration"
+bash tool/check_coverage.sh 70      # lib/domain e lib/data
+fvm flutter test test/golden/       # local, nunca no CI
+bash tool/test_db.sh                # local, exige supabase start
+bash tool/test_integration.sh       # local, exige supabase start
 ```
 
-O CI (`.github/workflows/ci.yml`) roda os mesmos comandos, menos o golden.
+O CI (`.github/workflows/ci.yml`) roda os três primeiros. Os três últimos são
+**degraus locais obrigatórios antes do PR**: golden porque a renderização difere
+entre plataformas, banco e integração porque exigem Docker
+([ADR 0008](docs/adr/0008-teste-e-definicao-de-pronto.md),
+[ADR 0010](docs/adr/0010-teste-de-integracao.md)).
+
+O CI pode ficar verde com a RLS quebrada. É custo aceito, e o que segura é
+rodar os três degraus locais — não a memória de quem abre o PR.
 
 Cobertura de 70% cobre `lib/domain/` e `lib/data/`. Ficam fora `presentation`
 (lá a verificação real é o golden) e `lib/data/**/supabase_*.dart` (delegação

@@ -27,10 +27,13 @@ jobs:
       - name: Análise
         run: dart analyze --fatal-infos
 
-      # Golden fica de fora: renderização difere entre macOS e Linux, e
-      # falha de plataforma treina todo mundo a ignorar CI vermelho (ADR 0008).
+      # Golden fica de fora: renderização difere entre macOS e Linux, e falha de
+      # plataforma treina todo mundo a ignorar CI vermelho (ADR 0008).
+      # Integração fica de fora: exige Docker e Supabase de pé (ADR 0010).
+      # `--exclude-tags` repetido NÃO acumula: a segunda ocorrência substitui a
+      # primeira. Seletor booleano numa flag só, senão o golden volta a rodar.
       - name: Testes
-        run: flutter test --coverage --exclude-tags golden
+        run: flutter test --coverage --exclude-tags "golden || integration"
 
       - name: Cobertura
         run: bash tool/check_coverage.sh 70
