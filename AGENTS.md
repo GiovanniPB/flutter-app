@@ -19,11 +19,18 @@ autenticação. Não existe `flutter` global: **todo comando passa por `fvm`**.
 
 ```
 fvm flutter pub get
+supabase start                          # portas 544xx (54321 é de outro projeto)
 supabase db reset                       # valida as migrations do zero
+bash tool/test_db.sh                    # pgTAP no container que já está de pé
 ```
+
+Mail local (código de acesso) em <http://127.0.0.1:54424>.
 
 Não há passo de geração de código: os providers do Riverpod são escritos à mão
 ([ADR 0007](docs/adr/0007-gerencia-de-estado.md)).
+
+**Idioma:** identificadores em inglês, textos de interface e documentos em
+português. Sem híbrido dentro da mesma classe.
 
 ## Escada de verificação
 
@@ -47,9 +54,10 @@ fvm flutter test --update-goldens test/golden/   # gera/atualiza os PNG
 ```
 
 O agente então **abre o PNG** em `test/golden/goldens/` e itera contra o mockup.
-Todo golden usa `pumpGolden` de `test/golden/harness.dart` — é ele que carrega a
-Roboto do SDK. Sem isso o texto vira caixinha e o PNG não serve para nada;
-`test/golden/escada_test.dart` existe só para provar que essa parte não quebrou.
+Todo golden usa `pumpGolden` (componente) ou `pumpGoldenScreen` (tela inteira)
+de `test/golden/harness.dart` — é ele que carrega a Roboto do SDK. Sem isso o
+texto vira caixinha e o PNG não serve para nada; `test/golden/escada_test.dart`
+existe só para provar que essa parte não quebrou.
 
 ## Arquitetura
 
@@ -71,12 +79,15 @@ Supabase.
 
 | O que | Onde |
 |---|---|
-| entidades, invariantes, regras puras | `lib/domain/` |
-| contratos de repositório | `lib/domain/repositories/` |
-| implementação Supabase, mapeamento | `lib/data/` |
-| providers Riverpod | `lib/presentation/**/providers/` |
-| widgets e telas | `lib/presentation/` |
+| entidades, invariantes, regras puras | `lib/domain/<área>/` |
+| contratos de repositório | `lib/domain/<área>/*_repository.dart` |
+| lógica de tradução do SDK (medida por cobertura) | `lib/data/<área>/` |
+| binding do SDK, só delegação | `lib/data/<área>/supabase_*.dart` |
+| providers Riverpod | `lib/presentation/<área>/*_providers.dart` |
+| widgets e telas | `lib/presentation/<área>/` |
+| composição do app e init | `lib/app/` |
 | migrations SQL | `supabase/migrations/` |
+| invariantes de banco (pgTAP) | `supabase/tests/` |
 | golden e harness de fonte | `test/golden/` |
 | configuração por flavor (git-ignored) | `env/dev.json` |
 
@@ -110,12 +121,15 @@ fvm dart analyze --fatal-infos
 fvm flutter test --coverage --exclude-tags golden
 bash tool/check_coverage.sh 70     # lib/domain e lib/data
 fvm flutter test test/golden/      # local, nunca no CI
+bash tool/test_db.sh               # local, exige supabase start
 ```
 
 O CI (`.github/workflows/ci.yml`) roda os mesmos comandos, menos o golden.
 
-Cobertura de 70% cobre `lib/domain/` e `lib/data/`. `presentation` fica de fora
-— lá a verificação real é o golden ([ADR 0008](docs/adr/0008-teste-e-definicao-de-pronto.md)).
+Cobertura de 70% cobre `lib/domain/` e `lib/data/`. Ficam fora `presentation`
+(lá a verificação real é o golden) e `lib/data/**/supabase_*.dart` (delegação
+pura). **Nenhuma decisão pode morar num `supabase_*.dart`** — se ganhar um `if`,
+está no arquivo errado ([ADR 0008](docs/adr/0008-teste-e-definicao-de-pronto.md)).
 
 ## Git
 

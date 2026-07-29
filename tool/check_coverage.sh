@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # Cobertura mínima em lib/domain e lib/data (ADR 0008).
-# presentation fica de fora de propósito: lá a verificação real é o golden.
+#
+# Duas exclusões, ambas deliberadas:
+#   presentation  — lá a verificação real é o golden.
+#   supabase_*    — binding do SDK, delegação pura, impossível exercitar sem
+#                   rede. Em troca, nada de lógica pode morar nesses arquivos;
+#                   o que precisa ser pensado vai para um irmão puro (por
+#                   exemplo auth_error.dart), que é medido.
 set -uo pipefail
 
 minimo="${1:-70}"
@@ -12,7 +18,7 @@ if [ ! -f "$lcov" ]; then
 fi
 
 leia=$(awk -v FS=':' '
-  /^SF:/    { medido = ($2 ~ /lib\/(domain|data)\//) }
+  /^SF:/    { medido = ($2 ~ /lib\/(domain|data)\//) && ($2 !~ /\/supabase_[^\/]*\.dart$/) }
   /^DA:/    { if (medido) { total++; split($2, c, ","); if (c[2] > 0) cobertas++ } }
   END       { printf "%d %d", cobertas + 0, total + 0 }
 ' "$lcov")

@@ -99,6 +99,37 @@ Widget golden(Widget child, {ThemeData? theme}) => MaterialApp(
   home: Scaffold(body: Center(child: child)),
 );
 
+/// Golden de **tela inteira**: sem `Scaffold` nem `Center` por cima, porque a
+/// tela traz o seu próprio.
+///
+/// Não usa `pumpAndSettle`: cursor de `TextField` e `CircularProgressIndicator`
+/// agendam quadro para sempre e o settle nunca volta. Dois pumps de duração
+/// fixa dão o mesmo resultado, de forma determinística.
+///
+/// `wrap` existe para o chamador injetar o que precisar (por exemplo
+/// `ProviderScope`) sem o harness conhecer a biblioteca de estado.
+Future<void> pumpGoldenScreen(
+  WidgetTester tester,
+  Widget screen, {
+  Size size = kGoldenSize,
+  ThemeData? theme,
+  Widget Function(Widget child)? wrap,
+}) async {
+  tester.view
+    ..physicalSize = size
+    ..devicePixelRatio = 1.0;
+  addTearDown(tester.view.reset);
+
+  final Widget app = MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: theme ?? ThemeData(useMaterial3: true),
+    home: screen,
+  );
+
+  await tester.pumpWidget(wrap == null ? app : wrap(app));
+  await tester.pump(const Duration(milliseconds: 300));
+}
+
 /// Renderiza num tamanho de tela fixo e determinístico.
 Future<void> pumpGolden(
   WidgetTester tester,
