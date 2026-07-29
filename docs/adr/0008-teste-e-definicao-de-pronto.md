@@ -29,10 +29,17 @@ no arquivo editado, não no workspace. Zero token de decisão.
 
 - `dart analyze --fatal-infos` limpo em todo o projeto
 - todos os testes passando
-- **cobertura ≥ 70%** em `lib/domain/` e `lib/data/` — `presentation` fica de
-  fora porque lá a verificação real é o golden
+- **cobertura ≥ 70%** em `lib/domain/` e `lib/data/` — com duas exclusões:
+  - `presentation`, porque lá a verificação real é o golden;
+  - `lib/data/**/supabase_*.dart`, o binding do SDK. Delegação pura não se
+    exercita sem rede, e teste com rede é proibido aqui. **Em troca, esses
+    arquivos não podem conter decisão nenhuma:** o que precisa ser pensado vai
+    para um irmão puro no mesmo diretório (por exemplo `auth_error.dart`), que é
+    medido. Se um `supabase_*.dart` ganhar um `if`, ele está no arquivo errado.
 - `bash tool/guards.sh` verde (teto de `state.md`, ausência de histórico em
   documento vivo)
+- **invariante de banco tem teste de banco:** trigger, `unique` e RLS se provam
+  em pgTAP (`bash tool/test_db.sh`), não em Dart
 
 **Golden roda local, não no CI.** Renderização difere entre macOS e Linux; os
 testes golden levam `tags: ['golden']` e o CI roda com `--exclude-tags golden`.
@@ -45,6 +52,12 @@ são as primeiras coisas testadas.
 
 - **Cobertura global de 80%** — arrastaria `presentation` para dentro da conta e
   incentivaria teste de widget escrito para satisfazer a métrica.
+- **`supabase test db` para o pgTAP** — puxa uma imagem Docker própria só para
+  rodar `pg_prove`. `tool/test_db.sh` roda o mesmo arquivo no container que o
+  `supabase start` já subiu: segundos em vez de minutos.
+- **Baixar o mínimo de cobertura quando o binding do SDK reprovou o gate** —
+  seria transformar um problema de estrutura em um número mais frouxo. A
+  separação entre binding e lógica pura resolve a causa.
 - **Sem número de cobertura** — sem chão, a cobertura cai sozinha.
 - **Golden no CI** — falha por diferença de renderização de plataforma, não por
   regressão real, e treina todo mundo a ignorar CI vermelho.

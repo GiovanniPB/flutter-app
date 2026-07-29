@@ -1,46 +1,24 @@
+import 'package:despensa/app/app.dart';
+import 'package:despensa/app/supabase.dart';
+import 'package:despensa/data/auth/supabase_auth_repository.dart';
+import 'package:despensa/presentation/auth/entrar_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const ProviderScope(child: DespensaApp()));
-}
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initSupabase();
 
-class DespensaApp extends StatelessWidget {
-  const DespensaApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Despensa',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true),
-      home: const AndaimeScreen(),
-    );
-  }
-}
-
-/// Placeholder do andaime — some na primeira fatia (`entrar`).
-class AndaimeScreen extends StatelessWidget {
-  const AndaimeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Icon(Icons.kitchen, size: 48),
-            const SizedBox(height: 12),
-            Text('Despensa', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 4),
-            Text(
-              'Andaime de pé. Próxima fatia: entrar.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
+  runApp(
+    ProviderScope(
+      overrides: [
+        // O único lugar do app que amarra o domínio ao Supabase.
+        authRepositoryProvider.overrideWithValue(
+          SupabaseAuthRepository(Supabase.instance.client.auth),
         ),
-      ),
-    );
-  }
+      ],
+      child: const DespensaApp(),
+    ),
+  );
 }

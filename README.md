@@ -12,8 +12,12 @@ torna o cadastro de compras rápido o bastante para não ser abandonado.
 
 ```bash
 fvm flutter pub get
-cp env/dev.example.json env/dev.json   # preencher com o projeto Supabase
+supabase start                         # imprime URL e chave publicável
+cp env/dev.example.json env/dev.json   # preencher com o que o start imprimiu
 fvm flutter run -d macos --dart-define-from-file=env/dev.json
 ```
+
+O código de acesso não sai por e-mail de verdade em desenvolvimento — ele chega
+na caixa local em <http://127.0.0.1:54424>.
 
 Flutter fixado em 3.44.6 via [`fvm`](https://fvm.app) (`.fvmrc`).
