@@ -10,6 +10,7 @@ Product _arroz() => Product(
 PantryItem _item({
   String id = 'i-1',
   DateTime? expiresOn,
+  DateTime? createdAt,
   int quantity = 1,
   DateTime? purchasedOn,
   int? priceCents,
@@ -18,6 +19,7 @@ PantryItem _item({
       id: id,
       product: _arroz(),
       expiresOn: expiresOn ?? DateTime(2027, 3, 12),
+      createdAt: createdAt ?? DateTime(2026, 7, 29),
       quantity: quantity,
       purchasedOn: purchasedOn,
       priceCents: priceCents,
@@ -59,28 +61,30 @@ void main() {
       expect(_item().priceCents, isNull);
     });
 
-    test('a hora é descartada na validade e na compra', () {
+    test('a hora é descartada na validade, na compra e no cadastro', () {
       // ADR 0004: um DateTime com hora escondida quebra toda comparação de
       // vencimento depois.
       final PantryItem item = _item(
         expiresOn: DateTime(2027, 3, 12, 23, 59, 59),
         purchasedOn: DateTime(2026, 7, 29, 14, 30),
+        createdAt: DateTime(2026, 7, 29, 9, 15),
       );
       expect(item.expiresOn, DateTime(2027, 3, 12));
       expect(item.purchasedOn, DateTime(2026, 7, 29));
+      expect(item.createdAt, DateTime(2026, 7, 29));
     });
 
     test('a janela começa na compra quando ela existe', () {
-      final PantryItem comCompra = _item(purchasedOn: DateTime(2026, 7, 1));
-      expect(
-        comCompra.windowStart(DateTime(2026, 7, 29)),
-        DateTime(2026, 7, 1),
+      final PantryItem comCompra = _item(
+        purchasedOn: DateTime(2026, 7, 1),
+        createdAt: DateTime(2026, 7, 29),
       );
+      expect(comCompra.windowStart, DateTime(2026, 7, 1));
     });
 
     test('sem data de compra, a janela começa no cadastro', () {
       expect(
-        _item().windowStart(DateTime(2026, 7, 29, 9, 15)),
+        _item(createdAt: DateTime(2026, 7, 29, 9, 15)).windowStart,
         DateTime(2026, 7, 29),
       );
     });

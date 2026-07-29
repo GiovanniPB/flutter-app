@@ -18,11 +18,13 @@ class PantryItem {
     required this.id,
     required this.product,
     required DateTime expiresOn,
+    required DateTime createdAt,
     this.quantity = 1,
     DateTime? purchasedOn,
     this.location,
     this.priceCents,
   })  : expiresOn = dateOnly(expiresOn),
+        createdAt = dateOnly(createdAt),
         purchasedOn = purchasedOn == null ? null : dateOnly(purchasedOn) {
     if (quantity < 1) {
       throw ArgumentError.value(quantity, 'quantity', 'a mínima é 1');
@@ -49,9 +51,14 @@ class PantryItem {
   /// Inteiro em centavos, BRL (ADR 0003). Nenhuma tela lê isto ainda.
   final int? priceCents;
 
+  /// Quando entrou na despensa. Só existe aqui porque é o começo da janela de
+  /// vencimento quando não há data de compra — a hora é descartada como em
+  /// toda data deste domínio.
+  final DateTime createdAt;
+
   /// Início da janela de vencimento (ADR 0004): a compra quando informada,
-  /// senão o cadastro. Quem usa é a fatia `vencendo`.
-  DateTime windowStart(DateTime createdAt) => purchasedOn ?? dateOnly(createdAt);
+  /// senão o cadastro.
+  DateTime get windowStart => purchasedOn ?? createdAt;
 
   @override
   bool operator ==(Object other) =>
