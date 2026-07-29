@@ -15,18 +15,21 @@ Banco com quatro tabelas (`households`, `household_members`, `products`,
 `pantry_items`), todas com RLS. `household_id` tem default
 `private.current_household()`: o cliente nunca envia a casa.
 
+Três degraus locais obrigatórios antes do PR, além do CI: golden, `test_db.sh`
+(pgTAP) e `test_integration.sh` (fim a fim contra o stack local).
+
 Desenvolvimento contra `supabase start` local, **portas 544xx** (a 54322 é de
 outro projeto na mesma máquina). Nenhum projeto na nuvem existe.
 
 ## Última fatia
 
-**cadastro-manual** — item cadastrado com nome e validade sobrevive a reabrir o
-app ([PR #4](https://github.com/GiovanniPB/flutter-app/pull/4)).
+**teste-de-integracao** (débito) — `bash tool/test_integration.sh` prova num
+comando que entrar e cadastrar funcionam contra o Supabase local
+([PR #5](https://github.com/GiovanniPB/flutter-app/pull/5)).
 
-2031 linhas em 24 arquivos: dentro do teto de arquivos, acima do de linhas.
-Dessa vez sem capital de verificação embutido — a fatia atravessa schema,
-domínio, dados e tela de uma vez, e esse é o piso de uma fatia vertical com
-tabela nova.
+535 linhas em 9 arquivos, dentro da faixa. Pagou-se por si: achou que
+`--exclude-tags` repetido não acumula, e o CI estava a um passo de rodar golden
+no Linux.
 
 ## Próximas fatias
 
@@ -39,13 +42,12 @@ tabela nova.
 
 ## Débitos conhecidos
 
-- **Realtime não verificado** — `watchItems` usa o stream do Supabase; a prova
-  de persistência leu por consulta direta.
-- **Fim a fim não roda sozinho** — as duas fatias foram provadas com script no
-  scratchpad contra o Supabase local. Virar suíte repetível exige decidir como
-  conviver com teste que precisa de Docker e não roda no CI. É ADR.
+- **Realtime não verificado** — `watchItems` usa o stream do Supabase; a
+  integração lê por consulta direta com as mesmas colunas.
 - **Nenhum toque real na tela** — painel do simulador iOS sem permissão. Existe
   um simulador `Despensa iPhone 17 Pro` criado e desligado.
+- **CI não cobre RLS** — custo aceito na [ADR 0010](adr/0010-teste-de-integracao.md);
+  quem cobre é o pgTAP e a integração, os dois locais.
 - **Nome de produto é sensível à caixa** — "Arroz" e "arroz" viram dois produtos
   na mesma casa. A restrição única usa colunas simples porque índice funcional
   não serve como alvo de `on conflict`.
@@ -73,8 +75,13 @@ tabela nova.
   `set local role authenticated`, senão falha por permissão e não por regra.
 - **Função em policy precisa de `execute`** — é avaliada como quem consulta.
   Função de **trigger** é o oposto: permissão é checada na criação.
+- **`--exclude-tags` repetido não acumula** — a segunda ocorrência substitui a
+  primeira. Use seletor booleano: `--exclude-tags "golden || integration"`.
 - **`supabase test db` fica preso** puxando imagem Docker. Use
   `bash tool/test_db.sh`.
+- **Daemon do Docker pendura sem avisar** — quando `docker version` não responde,
+  nenhum degrau local funciona e a saída é reiniciar o Docker Desktop, o que
+  derruba containers de outros projetos.
 - **Provider global sobrevive ao fechamento da tela** — formulário precisa zerar
   o estado depois de salvar.
 - **`pumpAndSettle` nunca volta** com `TextField` ou spinner na tela. Use pump de
