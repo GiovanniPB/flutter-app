@@ -4,7 +4,6 @@ import 'package:despensa/domain/auth/auth_repository.dart';
 import 'package:despensa/domain/auth/email.dart';
 import 'package:despensa/presentation/auth/entrar_providers.dart';
 import 'package:despensa/presentation/auth/entrar_screen.dart';
-import 'package:despensa/presentation/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -148,14 +147,7 @@ void main() {
     );
   });
 
-  testWidgets('sair chama o repositório', (WidgetTester tester) async {
-    final FakeAuthRepository repo = FakeAuthRepository();
-    await _pump(tester, repo, tela: const HomeScreen());
-
-    expect(find.text('Nada vencendo'), findsOneWidget);
-    await tester.tap(find.byKey(sairKey));
-    await tester.pump();
-
-    expect(repo.saidas, 1);
-  });
+  // A home deixou de ser superfície de autenticação: virou a despensa. O teste
+  // de `sair` mora agora em test/presentation/pantry/cadastro_sheet_test.dart,
+  // junto da tela que o abriga.
 }

@@ -1,7 +1,6 @@
 import 'package:despensa/domain/auth/auth_repository.dart';
 import 'package:despensa/presentation/auth/entrar_providers.dart';
 import 'package:despensa/presentation/auth/entrar_screen.dart';
-import 'package:despensa/presentation/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,16 +53,6 @@ void main() {
     );
   }, tags: <String>['golden']);
 
-  testWidgets('home — despensa vazia', (WidgetTester tester) async {
-    await pumpGoldenScreen(
-      tester,
-      const HomeScreen(),
-      wrap: _com(FakeAuthRepository()),
-    );
-
-    await expectLater(
-      find.byType(HomeScreen),
-      matchesGoldenFile('goldens/home_vazia.png'),
-    );
-  }, tags: <String>['golden']);
+  // O golden da home mudou de arquivo junto com a tela: ela agora é a despensa,
+  // e vive em test/golden/cadastro_test.dart.
 }
