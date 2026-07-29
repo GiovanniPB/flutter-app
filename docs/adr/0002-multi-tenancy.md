@@ -3,7 +3,7 @@
 ## Contexto
 
 O produto quer, em algum momento, que as pessoas de uma mesma casa vejam a
-mesma dispensa. Mas a v1 precisa ficar de pé rápido, e convite, aceite e tela
+mesma despensa. Mas a v1 precisa ficar de pé rápido, e convite, aceite e tela
 de membros são três fatias que não entregam o momento de valor.
 
 Multi-tenancy retrofitado é migration dolorosa: significa mexer em toda tabela,
@@ -13,7 +13,7 @@ toda policy e todo dado já gravado.
 
 **A v1 é single-user na superfície e multi-tenant no modelo.**
 
-- A unidade de compartilhamento é a **casa**. A dispensa pertence à casa, nunca
+- A unidade de compartilhamento é a **casa**. A despensa pertence à casa, nunca
   à pessoa.
 - **Toda tabela nasce com `household_id` e RLS ativa**, sem exceção — inclusive
   as da primeira fatia.

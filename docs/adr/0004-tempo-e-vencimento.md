@@ -10,7 +10,7 @@
 | Feijão em lata | 730 dias | avisa tarde demais para agir |
 
 Percentual puro erra nas mesmas duas pontas, invertidas: 20% de 5 dias é 1 dia
-(tarde), 20% de 730 dias é 146 dias (metade da dispensa em alerta permanente).
+(tarde), 20% de 730 dias é 146 dias (metade da despensa em alerta permanente).
 
 ## Decisão
 
@@ -38,9 +38,9 @@ errado assim que o dia vira.
 freezer, o usuário **informa a nova validade**; o app **sugere** um acréscimo a
 partir da categoria do alimento (tabela fixa, definida por nós, não editável
 pelo usuário). Ao tirar do freezer, o usuário informa a validade novamente.
-Geladeira e dispensa são apenas rótulos de localização.
+Geladeira e despensa são apenas rótulos de localização.
 
-**Vencer não dispara nada.** Item vencido é sinalizado e continua na dispensa
+**Vencer não dispara nada.** Item vencido é sinalizado e continua na despensa
 até o usuário dar baixa — vencido não significa descartado.
 
 ## Alternativas descartadas

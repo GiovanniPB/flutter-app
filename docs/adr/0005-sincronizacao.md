@@ -44,7 +44,7 @@ e isso é aceitável: são correções, não acumulação.
 
 - **Offline-first na v1 (PowerSync, Drift + fila)** — é a diferença entre um app
   e um app com sistema distribuído dentro. Não se paga antes do produto existir.
-- **Cache de leitura offline** — meia solução: o usuário vê a dispensa mas não
+- **Cache de leitura offline** — meia solução: o usuário vê a despensa mas não
   cadastra, que é justamente o que ele quer fazer longe de casa.
 - **Quantidade como contador mutável** — o motivo deste ADR.
 - **Quantidade atual materializada em coluna via trigger** — otimização
@@ -56,7 +56,7 @@ e isso é aceitável: são correções, não acumulação.
 Fácil: ligar offline depois é trocar a implementação do repositório e adicionar
 uma fila. O modelo de dados não muda, os dados gravados não migram.
 
-Difícil: cada leitura de dispensa agrega movimentos. Com dezenas de itens por
+Difícil: cada leitura de despensa agrega movimentos. Com dezenas de itens por
 casa, é irrelevante.
 
 Custo aceito: a v1 não funciona sem rede, e isso vai incomodar no mercado.

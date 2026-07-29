@@ -2,7 +2,7 @@
 
 ## Escopo da v1
 
-A v1 entrega **um pilar só: dispensa + vencimento**. A lista de compras está
+A v1 entrega **um pilar só: despensa + vencimento**. A lista de compras está
 mapeada aqui, mas fora do MVP — ela depende do fluxo de baixa existir, e vem
 quase de graça depois dele.
 
@@ -18,19 +18,19 @@ aparece na v1.
 
 **É a primeira coisa que o app mostra.** Só o que exige atenção:
 
-- **vencidos** no topo, visualmente separados — continuam na dispensa até o
+- **vencidos** no topo, visualmente separados — continuam na despensa até o
   usuário dar baixa
 - **dentro da janela** (ver [ADR 0004](adr/0004-tempo-e-vencimento.md)),
   ordenados por dias restantes
 - vazio é um estado de sucesso, não um erro: "nada vencendo" merece uma tela
   tranquila, não um ícone triste
 
-Ação principal: **FAB de adicionar**, presente aqui e na dispensa.
+Ação principal: **FAB de adicionar**, presente aqui e na despensa.
 
-### 3. Dispensa
+### 3. Despensa
 
 Tudo o que existe, com quantidade atual. Acessível em um toque a partir da
-home. Filtro por local (dispensa · geladeira · freezer).
+home. Filtro por local (despensa · geladeira · freezer).
 
 ### 4. Cadastro rápido
 
@@ -57,7 +57,7 @@ Detalhe e as ações sobre um item:
 
 ```
 Entrar
-  └── Vencendo (home) ──[aba]── Dispensa
+  └── Vencendo (home) ──[aba]── Despensa
         │                          │
         └──────── FAB ─────────────┴──► Cadastro rápido (sheet)
                                    │
@@ -73,7 +73,7 @@ Duas abas na v1. A terceira nasce com a lista de compras.
 | `SeloValidade` | vencido · vencendo · ok — a peça de linguagem visual mais reusada do app |
 | `ItemTile` | nome, quantidade atual, selo de validade |
 | `CampoValidade` | entrada de data pura, otimizada para digitar rápido |
-| `SeletorLocal` | dispensa · geladeira · freezer |
+| `SeletorLocal` | despensa · geladeira · freezer |
 | `SheetBaixa` | quantidade + consumi/joguei fora |
 
 ## Mapeado, fora da v1

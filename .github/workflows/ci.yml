@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Guardas de documento primeiro: são instantâneos e pegam o modo de
+      # falha mais comum do método (documento vivo virando diário).
+      - name: Guardas de documento
+        run: bash tool/guards.sh
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.6'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Análise
+        run: dart analyze --fatal-infos
+
+      # Golden fica de fora: renderização difere entre macOS e Linux, e
+      # falha de plataforma treina todo mundo a ignorar CI vermelho (ADR 0008).
+      - name: Testes
+        run: flutter test --coverage --exclude-tags golden
+
+      - name: Cobertura
+        run: bash tool/check_coverage.sh 70
