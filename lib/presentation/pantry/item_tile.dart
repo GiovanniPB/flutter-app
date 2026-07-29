@@ -1,4 +1,5 @@
 import 'package:despensa/domain/pantry/pantry_item.dart';
+import 'package:despensa/presentation/pantry/expiry_badge.dart';
 import 'package:flutter/material.dart';
 
 /// Vocabulário de data e local da despensa, em português, num lugar só.
@@ -34,9 +35,13 @@ String locationLabel(StorageLocation location) => switch (location) {
     };
 
 class ItemTile extends StatelessWidget {
-  const ItemTile({required this.item, super.key});
+  const ItemTile({required this.item, required this.today, super.key});
 
   final PantryItem item;
+
+  /// Chega de fora porque o vencimento é calculado na hora e o widget não pode
+  /// perguntar as horas sozinho — é o que deixa o golden determinístico.
+  final DateTime today;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +60,7 @@ class ItemTile extends StatelessWidget {
           color: tema.colorScheme.onSurfaceVariant,
         ),
       ),
+      trailing: ExpiryBadge(item: item, today: today),
     );
   }
 }
